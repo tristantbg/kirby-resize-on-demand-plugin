@@ -10,15 +10,13 @@ Note: This plugin only works with JPG and PNG files.
 
 The plugin creates a URL to a resized image **without creating the image itself**. So if the browser requested this URL, the response would be a 404 error. To prevent that, a router matches the URL request and runs a function that finds and resizes the original image to the requested width via Kirby’s build-in `thumb()` function. Then the resized image is served via a chunked `readfile()`. If the resized image already exists, it will be loaded like any ordinary image.
 
-**Important**: The plugin might not work with the build-in PHP Webserver on OSX. (See Kirby docs: [Running from Command Line](http://getkirby.com/docs/installation/running-with-php).) Use Vagrant or MAMP instead.
-
 **Example URL:** `http://yoursite.com/thumbs/pageuri/imagename-500-a1fe324ad3b1.jpg`
 
 The resized images are created in the `thumbs` folder, but in a subdirectory that matches the untranslated URI of the page where the original image is found. The filename consists of the image name, the requested width and a 12 character MD5 hash of the original images’s `$image->modified()` value.
 
 Based on these information, the router runs a function that finds the original image, resizes it and serves the resized image via a chunked `readfile()`.
 
-The MD5 hash at the end of the image name is intended for cache-busting. (See _Recommendations_ below). Hashing the last modified date is not 100% ideal, but still better/faster than hashing the entire contents of the image.
+The MD5 hash at the end of the image name is intended for cache-busting. (See _Recommendations_ below). So if your replace the original image, the hash changes and the browser will request a new resized image instead of loading a cached version. Hashing the last modified date is not 100% ideal, but still better/faster than hashing the entire contents of the image.
 
 #### Limitations and Security:
 
@@ -31,6 +29,9 @@ site/
     resizeOnDemand/
       resizeOnDemand.php
 ```
+
+**Important**: The plugin might not work with the build-in PHP Webserver on OSX. (See Kirby docs: [Running from Command Line](http://getkirby.com/docs/installation/running-with-php).) Use Vagrant or MAMP instead.
+
 
 ## Usage
 
