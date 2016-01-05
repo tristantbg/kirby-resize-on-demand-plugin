@@ -12,9 +12,7 @@ The plugin creates a URL to a resized image **without creating the image itself*
 
 **Important**: The plugin might not work with the build-in PHP Webserver on OSX. (See Kirby docs: [Running from Command Line](http://getkirby.com/docs/installation/running-with-php).) Use Vagrant or MAMP instead.
 
-#### Example URL:
-
-`http://yoursite.com/thumbs/pageuri/imagename-500-a1fe324ad3b1.jpg`
+**Example URL:** `http://yoursite.com/thumbs/pageuri/imagename-500-a1fe324ad3b1.jpg`
 
 The resized images are created in the `thumbs` folder, but in a subdirectory that matches the untranslated URI of the page where the original image is found. The filename consists of the image name, the requested width and a 12 character MD5 hash of the original images’s `$image->modified()` value.
 
