@@ -51,27 +51,33 @@ resizeOnDemand($image, 453);
 
 ```
 
-_Simple srcset:_
-```html
-<img
-  src="<?php echo resizeOnDemand($image, 500) ?>"
-  srcset="
-    <?php echo resizeOnDemand($image, 1500) ?> 1500w,
-    <?php echo resizeOnDemand($image, 1000) ?> 1000w,
-    <?php echo resizeOnDemand($image, 500) ?> 500w"
-  sizes="100vw"
-  alt="…">
-
-```
-
 _Picture element:_
 ```html
 <picture>
-  <source srcset="<?php echo resizeOnDemand($image, 1500) ?>" media="(min-width: 1000px)">
-  <source srcset="<?php echo resizeOnDemand($image, 1000) ?>" media="(min-width: 500px)">
-  <source srcset="<?php echo resizeOnDemand($image, 500) ?>">
-  <img srcset="<?php echo resizeOnDemand($image, 500) ?>" alt="…">
+  <source srcset="<?php echo resizeOnDemand($image, 1400) ?>" media="(min-width: 1200px)">
+  <source srcset="<?php echo resizeOnDemand($image, 1200) ?>" media="(min-width: 1000px)">
+  <source srcset="<?php echo resizeOnDemand($image, 1000) ?>" media="(min-width: 800px)">
+  <source srcset="<?php echo resizeOnDemand($image, 800) ?>" media="(min-width: 600px)">
+  <source srcset="<?php echo resizeOnDemand($image, 600) ?>" media="(min-width: 400px)">
+  <source srcset="<?php echo resizeOnDemand($image, 400) ?>">
+  <img srcset="<?php echo resizeOnDemand($image, 400) ?>" alt="…">
 </picture> 
+
+```
+
+_Simple srcset:_
+```html
+<img
+  src="<?php echo resizeOnDemand($image, 400) ?>"
+  srcset="
+    <?php echo resizeOnDemand($image, 1400) ?> 1400w,
+    <?php echo resizeOnDemand($image, 1200) ?> 1200w,
+    <?php echo resizeOnDemand($image, 1000) ?> 1000w,
+    <?php echo resizeOnDemand($image, 800) ?> 800w,
+    <?php echo resizeOnDemand($image, 600) ?> 600w,
+    <?php echo resizeOnDemand($image, 400) ?> 400w"
+  sizes="100vw"
+  alt="…">
 
 ```
 
