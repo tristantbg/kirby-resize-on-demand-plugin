@@ -30,7 +30,7 @@ $router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-f0-9]{12})(\.(jpeg
         // create directories if necessary
         if (!f::exists($root)) dir::make($root, true);
 
-        // delete old versions of this image
+        // delete obsolete versions of this image
         $folder = new Folder($root);
         $pattern = '/'. $filename .'-[1-9][0-9]{2,3}-(?!'. $hash .')[a-f0-9]{12}\.'. $image->extension() .'$/';
 
