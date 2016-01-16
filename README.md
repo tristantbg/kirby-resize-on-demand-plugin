@@ -16,7 +16,7 @@ The resized images are created in the `thumbs` folder, but in a subdirectory tha
 
 Based on these information, the router runs a function that finds the original image, resizes it and serves the resized image via a chunked `readfile()`.
 
-The MD5 hash at the end of the image name is intended for cache-busting. (See _Recommendations_ below). So if you replace the original image, the hash changes and the browser will request a new resized image instead of loading a cached version. Also, any resized version of the original image is deleted, if its 12 character MD5 hash no longer mathes the current hash.
+The MD5 hash at the end of the image name is intended for cache-busting. (See _Recommendations_ below). So if you replace the original image, the hash changes and the browser will request a new resized image instead of loading a cached version. Also, any resized version of the original image is deleted, if its 12 character MD5 hash no longer matches the current hash.
 
 #### Limitations and Security:
 
