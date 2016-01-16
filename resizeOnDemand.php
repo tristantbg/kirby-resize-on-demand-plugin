@@ -2,7 +2,7 @@
 
 $router = new Router();
 
-$router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-fA-F0-9]{12})(\.(jpeg|jpg|png)$)', array(
+$router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-f0-9]{12})(\.(jpeg|jpg|png)$)', array(
   'method'  => 'GET',
   'action'  => function($path, $filename, $width, $hash, $extension){
 
@@ -25,27 +25,37 @@ $router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-fA-F0-9]{12})(\.(j
 
         // thumb root
         $path = str_replace('/', DS, $page->id());
-        $root = kirby()->roots()->index() . DS . 'thumbs' . DS . $path;  
+        $root = kirby()->roots()->index() . DS .'thumbs'. DS . $path;  
 
         // create directories if necessary
         if (!f::exists($root)) dir::make($root, true);
 
+        // delete old versions of this image
+        $folder = new Folder($root);
+        $pattern = '/'. $filename .'-[1-9][0-9]{2,3}-(?!'. $hash .')[a-f0-9]{12}\.'. $image->extension() .'$/';
+
+        foreach ($folder->files() as $file) {
+          if (preg_match($pattern, $file->filename())) {
+            $file->delete();
+          }
+        }
+
         // thumb url
-        $url = kirby()->urls()->index() . '/thumbs/' . $page->id();
+        $url = kirby()->urls()->index() .'/thumbs/'. $page->id();
 
         // create thumb
         $thumb = thumb($image, array(
           'destination' => true,
           'width' => $width,
-          'filename' => '{safeName}-{width}-' . $modified . '.{extension}',
+          'filename' => '{safeName}-{width}-'. $modified .'.{extension}',
           'root' => $root, 
           'url' => $url,
         ));
 
         // send headers
         header::type($image->mime());
-        header('Cache-control: max-age=' . (60*60*24*365));
-        header('Expires: ' . gmdate(DATE_RFC1123, time() + (60*60*24*365)));
+        header('Cache-control: max-age='. (60*60*24*365));
+        header('Expires: '. gmdate(DATE_RFC1123, time() + (60*60*24*365)));
 
         // read file
         function readFileChunked($filename, $retbytes = true) {
@@ -100,13 +110,13 @@ function resizeOnDemand($image, $width = 500){
 
     // page or site
     $page = $image->page();
-    $url = kirby()->urls()->index() . '/thumbs/' . $page->id();  
+    $url = kirby()->urls()->index() .'/thumbs/'. $page->id();  
     if ($page != kirby()->site()) $url .= '/';
 
     // hash
     $modified = substr(md5($image->modified()),0,12);
 
-    return $url . $image->name() . '-' . $width . '-' . $modified . '.' . $image->extension();
+    return $url . $image->name() .'-'. $width .'-'. $modified .'.'. $image->extension();
   }
   else {
     return $image->url();
