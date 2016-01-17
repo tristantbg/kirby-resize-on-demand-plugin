@@ -12,11 +12,11 @@ The plugin creates a URL to a resized image **without creating the image itself*
 
 **Example URL:** `http://yoursite.com/thumbs/pageuri/imagename-500-a1fe324ad3b1.jpg`
 
-The resized images are created in the `thumbs` folder, but in a subdirectory that matches the untranslated URI of the page where the original image is found. The filename consists of the image name, the requested width and a 12 character MD5 hash of the original images’s `$image->modified()` value.
+The resized images are created in the `thumbs` folder, but in a subdirectory that matches the untranslated URI of the page where the original image is found. The filename consists of the image name, the requested width and a 12 character MD5 hash of the original images’s `$image->modified()` value. Based on these information, the router runs a function that finds the original image, resizes it and serves the resized image via a chunked `readfile()`.
 
-Based on these information, the router runs a function that finds the original image, resizes it and serves the resized image via a chunked `readfile()`.
+The MD5 hash at the end of the image name is intended for cache-busting. (See _Recommendations_ below). So if you replace the original image, the hash changes and the browser will request a new resized image instead of loading a cached version. 
 
-The MD5 hash at the end of the image name is intended for cache-busting. (See _Recommendations_ below). So if you replace the original image, the hash changes and the browser will request a new resized image instead of loading a cached version. Also, any resized version of the original image is deleted, if its 12 character MD5 hash no longer matches the current hash.
+If the original image is renamed, replaced or deleted, any obsolete resized images will be removed. In addition, if a page is moved or deleted, the directory with the resized images will be removed.
 
 #### Limitations and Security:
 

@@ -4,7 +4,7 @@ $router = new Router();
 
 $router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-f0-9]{12})(\.(jpeg|jpg|png)$)', array(
   'method'  => 'GET',
-  'action'  => function($path, $filename, $width, $hash, $extension){
+  'action'  => function($path, $filename, $width, $hash, $extension) {
 
     // check if the requested width is within the defined range    
     if ($width % 100 !== 0 || $width > 3000 ) {
@@ -29,16 +29,6 @@ $router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-f0-9]{12})(\.(jpeg
 
         // create directories if necessary
         if (!f::exists($root)) dir::make($root, true);
-
-        // delete obsolete versions of this image
-        $folder = new Folder($root);
-        $pattern = '/'. $filename .'-[1-9][0-9]{2,3}-(?!'. $hash .')[a-f0-9]{12}\.'. $image->extension() .'$/';
-
-        foreach ($folder->files() as $file) {
-          if (preg_match($pattern, $file->filename())) {
-            $file->delete();
-          }
-        }
 
         // thumb url
         $url = kirby()->urls()->index() .'/thumbs/'. $page->id();
@@ -100,7 +90,7 @@ if($route = $router->run()) {
   $response = call($route->action(), $route->arguments());
 }
 
-function resizeOnDemand($image, $width = 500){
+function resizeOnDemand($image, $width = 500) {
   if ($image && in_array($image->extension(), array('jpg', 'jpeg', 'png'))) {    
     
     // limit width to predefined range / values
@@ -122,3 +112,48 @@ function resizeOnDemand($image, $width = 500){
     return $image->url();
   } 
 }
+
+function resizeOnDemandDeleteFile($file, $name) {
+  if (in_array($file->extension(), array('jpg', 'jpeg', 'png'))) {
+    $path = str_replace('/', DS, $file->page()->id());
+    $root = kirby()->roots()->index() . DS .'thumbs'. DS . $path;  
+
+    $folder = new Folder($root);
+    $pattern = '/'. $name .'-[1-9][0-9]{2,3}-[a-f0-9]{12}\.'. $file->extension() .'$/';
+
+    // delete all resized versions of this image
+    foreach ($folder->files() as $file) {
+      if (preg_match($pattern, $file->filename())) {
+        $file->delete();
+      }
+    }
+  }
+}
+
+function resizeOnDemandDeleteDir($pageId) {
+  $path = str_replace('/', DS, $pageId);
+  $root = kirby()->roots()->index() . DS .'thumbs'. DS . $path;
+
+  // delete directory with resized images
+  if (f::exists($root)) dir::remove($root, false);
+}
+
+kirby()->hook('panel.file.rename', function($file, $oldFile) {
+  resizeOnDemandDeleteFile($file, $oldFile->name());
+});
+
+kirby()->hook('panel.file.replace', function($file) {
+  resizeOnDemandDeleteFile($file, $file->name());
+});
+
+kirby()->hook('panel.file.delete', function($file) {
+  resizeOnDemandDeleteFile($file, $file->name());
+});
+
+kirby()->hook('panel.page.move', function($page, $oldPage) {
+  resizeOnDemandDeleteDir($oldPage->id());
+});
+
+kirby()->hook('panel.page.delete', function($page) {
+  resizeOnDemandDeleteDir($page->id());
+});
