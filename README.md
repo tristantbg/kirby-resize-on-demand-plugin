@@ -16,7 +16,7 @@ The resized images are created in the `thumbs` folder, but in a subdirectory tha
 
 The MD5 hash at the end of the image name is intended for cache-busting. (See _Recommendations_ below). So if you replace the original image, the hash changes and the browser will request a new resized image instead of loading a cached version. 
 
-If the original image is renamed, replaced or deleted, any obsolete resized images will be removed. In addition, if a page is moved or deleted, the directory with the resized images will be removed.
+If the original image is renamed, replaced or deleted via the panel, any obsolete resized images will be removed. In addition, if a page is moved or deleted via the panel, the directory with the resized images will be removed.
 
 #### Limitations and Security:
 
