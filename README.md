@@ -8,7 +8,7 @@ Note: This plugin only works with JPG and PNG files.
 
 ## How it works
 
-The plugin creates a URL to a resized image **without creating the image itself**. So if the browser requested this URL, the response would be a 404 error. To prevent that, a router matches the URL request and runs a function that finds and resizes the original image to the requested width via Kirby’s build-in `thumb()` function. Then the resized image is served via a chunked `readfile()`. If the resized image already exists, it will be loaded like a regular image.
+The `resizeOnDemand()` method returns a URL to a resized image **without creating the image itself**. So if the browser requested this URL, the response would be a 404 error. To prevent that, a router matches the URL request and runs a function that finds and resizes the original image to the requested width via Kirby’s build-in `thumb()` function. Then the resized image is served via a chunked `readfile()`. If the resized image already exists, it will be loaded like a regular image.
 
 **Example URL:** `http://yoursite.com/thumbs/pageuri/imagename-500-a1fe324ad3b1.jpg`
 
