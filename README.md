@@ -51,7 +51,7 @@ resizeOnDemand($image, 453);
 
 ```
 
-_Picture element:_
+Picture element:
 ```html
 <picture>
   <source srcset="<?php echo resizeOnDemand($image, 1400) ?>" media="(min-width: 1200px)">
@@ -65,7 +65,7 @@ _Picture element:_
 
 ```
 
-_Simple srcset:_
+Simple srcset:
 ```html
 <img
   src="<?php echo resizeOnDemand($image, 400) ?>"
@@ -82,7 +82,7 @@ _Simple srcset:_
 ```
 
 
-_Extended srcset with lazyloading and HiDPI support:_
+Extended srcset with lazyloading and HiDPI support:
 ```php
 <?php 
   $srcset = '';
@@ -111,12 +111,4 @@ The one time when the resized image is served via `readfile()`, far-future `Cach
   ExpiresByType image/jpeg   "access plus 1 year"
   ExpiresByType image/png    "access plus 1 year"
 </IfModule>
-```
-Consider adding the following CSS, so that your image always fills its container. The container can be set to whichever size you need in your layout.
-
-```css
-img {
-  width: 100%;
-  height: auto;
-}
 ```
