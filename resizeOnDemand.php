@@ -4,10 +4,10 @@ $router = new Router();
 
 $router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-f0-9]{12})(\.(jpeg|jpg|png)$)', array(
   'method'  => 'GET',
-  'action'  => function($path, $filename, $width, $hash, $extension) {
+  'action'  => function($path, $filename, $height, $hash, $extension) {
 
     // check if the requested width is within the defined range    
-    if ($width % 100 !== 0 || $width > 3000 ) {
+    if ($height % 100 !== 0 || $height > 3000 ) {
       header::notfound();
       exit;
     }
@@ -36,8 +36,8 @@ $router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-f0-9]{12})(\.(jpeg
         // create thumb
         $thumb = thumb($image, array(
           'destination' => true,
-          'width' => $width,
-          'filename' => '{safeName}-{width}-'. $modified .'.{extension}',
+          'height' => $height,
+          'filename' => '{safeName}-{height}-'. $modified .'.{extension}',
           'root' => $root, 
           'url' => $url,
         ));
@@ -90,13 +90,13 @@ if($route = $router->run()) {
   $response = call($route->action(), $route->arguments());
 }
 
-function resizeOnDemand($image, $width = 500) {
+function resizeOnDemand($image, $height = 500) {
   if ($image && in_array($image->extension(), array('jpg', 'jpeg', 'png'))) {    
     
     // limit width to predefined range / values
-    if ($width < 100) $width = 100;
-    else if ($width > 3000) $width = 3000;
-    else $width = ceil($width / 100) * 100;
+    if ($height < 100) $height = 100;
+    else if ($height > 3000) $height = 3000;
+    else $height = ceil($height / 100) * 100;
 
     // page or site
     $page = $image->page();
@@ -106,7 +106,7 @@ function resizeOnDemand($image, $width = 500) {
     // hash
     $modified = substr(md5($image->modified()),0,12);
 
-    return $url . $image->name() .'-'. $width .'-'. $modified .'.'. $image->extension();
+    return $url . $image->name() .'-'. $height .'-'. $modified .'.'. $image->extension();
   }
   else {
     return $image->url();
