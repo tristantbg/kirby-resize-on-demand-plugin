@@ -2,12 +2,12 @@
 
 $router = new Router();
 
-$router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-f0-9]{12})(\.(jpeg|jpg|png)$)', array(
+$router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-z]{1})-([a-f0-9]{12})(\.(jpeg|jpg|png)$)', array(
   'method'  => 'GET',
-  'action'  => function($path, $filename, $height, $hash, $extension) {
+  'action'  => function($path, $filename, $size, $direction, $hash, $extension) {
 
     // check if the requested width is within the defined range    
-    if ($height % 100 !== 0 || $height > 3000 ) {
+    if ($size % 100 !== 0 || $size > 3000 ) {
       header::notfound();
       exit;
     }
@@ -34,13 +34,24 @@ $router->register('thumbs(\/.*)?/(:any)-([1-9][0-9]{2,3})-([a-f0-9]{12})(\.(jpeg
         $url = kirby()->urls()->index() .'/thumbs/'. $page->id();
 
         // create thumb
-        $thumb = thumb($image, array(
-          'destination' => true,
-          'height' => $height,
-          'filename' => '{safeName}-{height}-'. $modified .'.{extension}',
-          'root' => $root, 
-          'url' => $url,
-        ));
+        if ($direction == 'w') {
+        	$thumb = thumb($image, array(
+        		'destination' => true,
+        		'width' => $size,
+        		'filename' => '{safeName}-{width}-'. $direction .'-'. $modified .'.{extension}',
+        		'root' => $root, 
+        		'url' => $url,
+        		));
+        } else {
+        	$thumb = thumb($image, array(
+        		'destination' => true,
+        		'height' => $size,
+        		'filename' => '{safeName}-{height}-'. $direction .'-'. $modified .'.{extension}',
+        		'root' => $root, 
+        		'url' => $url,
+        		));
+        }
+        
 
         // send headers
         header::type($image->mime());
@@ -90,13 +101,16 @@ if($route = $router->run()) {
   $response = call($route->action(), $route->arguments());
 }
 
-function resizeOnDemand($image, $height = 500) {
-  if ($image && in_array($image->extension(), array('jpg', 'jpeg', 'png'))) {    
+function resizeOnDemand($image, $size = 500, $byheight = false) {
+  if ($image && in_array($image->extension(), array('jpg', 'jpeg', 'png'))) {   
+
+  	if ($byheight) $direction = 'h';
+  	if (!$byheight) $direction = 'w';
     
     // limit width to predefined range / values
-    if ($height < 100) $height = 100;
-    else if ($height > 3000) $height = 3000;
-    else $height = ceil($height / 100) * 100;
+    if ($size < 100) $size = 100;
+    else if ($size > 3000) $size = 3000;
+    else $size = ceil($size / 100) * 100;
 
     // page or site
     $page = $image->page();
@@ -106,7 +120,7 @@ function resizeOnDemand($image, $height = 500) {
     // hash
     $modified = substr(md5($image->modified()),0,12);
 
-    return $url . $image->name() .'-'. $height .'-'. $modified .'.'. $image->extension();
+    return $url . $image->name() .'-'. $size .'-'. $direction .'-'. $modified .'.'. $image->extension();
   }
   else {
     return $image->url();
@@ -119,7 +133,7 @@ function resizeOnDemandDeleteFile($file, $name) {
     $root = kirby()->roots()->index() . DS .'thumbs'. DS . $path;  
 
     $folder = new Folder($root);
-    $pattern = '/'. $name .'-[1-9][0-9]{2,3}-[a-f0-9]{12}\.'. $file->extension() .'$/';
+    $pattern = '/'. $name .'-[1-9][0-9]{2,3}-([a-z]{1})-[a-f0-9]{12}\.'. $file->extension() .'$/';
 
     // delete all resized versions of this image
     foreach ($folder->files() as $file) {
